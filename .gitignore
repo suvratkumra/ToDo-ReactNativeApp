@@ -1,0 +1,11 @@
+# React Native specific
+node_modules/
+ios/Pods/
+android/.gradle/
+android/local.properties
+android/app/build/
+*.log
+npm-debug.log
+yarn-error.log
+*.apk
+*.aab
