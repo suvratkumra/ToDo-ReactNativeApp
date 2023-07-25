@@ -2,13 +2,11 @@ import React from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 
 const HelpScreen = ({ navigation }) => {
-    const handleButtonClick = () => {
-        navigation.navigate('Other'); // This will navigate to the "Other" screen
-    };
+
 
     return (
         <View style={styles.container}>
-            <Button title="Go to Other Screen" onPress={handleButtonClick} />
+            <Button title="Go to Other Screen" />
         </View>
     );
 };

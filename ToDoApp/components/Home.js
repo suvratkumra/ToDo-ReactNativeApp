@@ -11,9 +11,6 @@ function HomeScreen({ navigation }) {
             <View>
                 <Text>Home Screen</Text>
             </View>
-            <View>
-                <Button title="Help" onPress={() => goToPageHandler("Help")} />
-            </View>
         </View>
 
     );
@@ -24,7 +21,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        position: 'relative', // Add this for positioning
+    },
+    helpContainer: {
+        position: 'absolute', // Position the helpContainer absolutely
+        bottom: 20, // Adjust the top position as needed
+        right: 20, // Adjust the right position as needed
     }
 });
 
