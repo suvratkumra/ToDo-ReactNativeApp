@@ -5,10 +5,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HelpScreen from './components/Help';
 import HomeScreen from './components/Home';
 import Footer from './components/Footer';
+import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
+  let [fontsLoaded] = useFonts({
+    Inter_900Black,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator>

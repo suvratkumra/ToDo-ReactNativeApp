@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     optionText: {
+        fontFamily: 'Inter_900Black',
         color: 'white',
         fontSize: 20,
     },
