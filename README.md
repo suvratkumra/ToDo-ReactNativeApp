@@ -8,3 +8,6 @@
 * Open terminal and go to the root directory: 
     * `` npx expo start ``
     * Scan the QR code displayed on the screen using your phone to open the application in `ExpoGo`
+
+## Useful Documentations
+* [Button event handlers](https://reactnative.dev/docs/handling-touches)
