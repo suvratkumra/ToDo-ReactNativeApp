@@ -11,3 +11,6 @@
 
 ## Useful Documentations
 * [Button event handlers](https://reactnative.dev/docs/handling-touches)
+
+## Dependencies to download for the application to compile and run. 
+```npm install @react-navigation/native @react-navigation/stack```

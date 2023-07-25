@@ -1,15 +1,24 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from 'react';
+import { View, Button, StyleSheet } from 'react-native';
 
-function Help(props) {
+const HelpScreen = ({ navigation }) => {
+    const handleButtonClick = () => {
+        navigation.navigate('Other'); // This will navigate to the "Other" screen
+    };
+
     return (
-        < View >
-            <Text>
-                This is from help function
-            </Text>
-            <Text>{props.message}</Text>
-        </View >
-    )
-}
+        <View style={styles.container}>
+            <Button title="Go to Other Screen" onPress={handleButtonClick} />
+        </View>
+    );
+};
 
-export default Help;
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
+
+export default HelpScreen;
