@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import Font Awesome icons from the library
+import { Ionicons, FontAwesome5, AntDesign } from '@expo/vector-icons'; // Import Font Awesome icons from the library
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -14,8 +14,8 @@ function Footer() {
                 <Text style={styles.optionText}>Home</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.option} onPress={() => { navigation.navigate('Search') }}>
-                <Ionicons name="search" size={24} color="white" />
-                <Text style={styles.optionText}>Search</Text>
+                <AntDesign name="calendar" size={24} color="white" />
+                <Text style={styles.optionText}>Calendar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.option} onPress={() => { navigation.navigate('Settings') }}>
                 <Ionicons name="settings" size={24} color="white" />
