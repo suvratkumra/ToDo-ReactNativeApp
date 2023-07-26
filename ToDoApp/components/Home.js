@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 
 function HomeScreen({ navigation }) {
 
@@ -8,6 +8,15 @@ function HomeScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
+            <View>
+                <TouchableOpacity onPress={() => { }}>
+                    <View style={styles.linkContainer}>
+                        <Text style={styles.link}>
+                            Hire me!
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
             <View>
                 <Text>Home Screen</Text>
             </View>
@@ -19,7 +28,6 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
         position: 'relative', // Add this for positioning

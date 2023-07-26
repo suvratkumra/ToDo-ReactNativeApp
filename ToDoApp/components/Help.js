@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, A, TouchableOpacity, Linking, Text } from 'react-native';
 
 const HelpScreen = ({ navigation }) => {
-
-
     return (
         <View style={styles.container}>
-            <Button title="Go to Other Screen" />
+
         </View>
     );
 };
@@ -18,6 +16,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white'
     },
+    link: {
+        fontSize: 32,
+        color: '#ffffff'
+    },
+    linkContainer: {
+        padding: 20,
+        marginBottom: 0,
+        marginHorizontal: 20,
+        marginTop: 20,
+        borderColor: '#E65151',
+        borderRadius: 10,
+        borderWidth: 1,
+        backgroundColor: '#FF6B6B'
+    }
 });
 
 export default HelpScreen;

@@ -9,6 +9,7 @@ import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 import SettingsScreen from './components/Settings';
 import SearchScreen from './components/Search';
 import CustomHeader from './components/Header';
+import AboutScreen from './components/About';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,11 @@ function App() {
         <Stack.Screen name="Search" component={SearchScreen} options={{
           header: ({ navigation }) => (
             <CustomHeader title="Search" onBackPress={() => navigation.goBack()} />
+          ),
+        }} />
+        <Stack.Screen name="About" component={AboutScreen} options={{
+          header: ({ navigation }) => (
+            <CustomHeader title="About" onBackPress={() => navigation.goBack()} />
           ),
         }} />
       </Stack.Navigator>
