@@ -13,7 +13,7 @@ function Footer() {
                 <Ionicons name="home" size={24} color="white" />
                 <Text style={styles.optionText}>Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.option} onPress={() => { navigation.navigate('Search') }}>
+            <TouchableOpacity style={styles.option} onPress={() => { navigation.navigate('Calendar') }}>
                 <AntDesign name="calendar" size={24} color="white" />
                 <Text style={styles.optionText}>Calendar</Text>
             </TouchableOpacity>

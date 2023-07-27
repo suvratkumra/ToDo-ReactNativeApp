@@ -15,7 +15,7 @@ function HomeScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.newListContainer}>
-                <TouchableOpacity onPress={() => { }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('NewList') }}>
                     <View style={styles.linkContainer}>
                         <Text style={styles.link}>
                             Create

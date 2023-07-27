@@ -7,9 +7,10 @@ import HomeScreen from './components/Home';
 import Footer from './components/Footer';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 import SettingsScreen from './components/Settings';
-import SearchScreen from './components/Search';
+import CalendarScreen from './components/Calendar';
 import CustomHeader from './components/Header';
 import AboutScreen from './components/About';
+import NewListScreen from './components/NewList';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,14 +44,19 @@ function App() {
             <CustomHeader title="Settings" onBackPress={() => navigation.goBack()} />
           ),
         }} />
-        <Stack.Screen name="Search" component={SearchScreen} options={{
+        <Stack.Screen name="Calendar" component={CalendarScreen} options={{
           header: ({ navigation }) => (
-            <CustomHeader title="Search" onBackPress={() => navigation.goBack()} />
+            <CustomHeader title="Calendar" onBackPress={() => navigation.goBack()} />
           ),
         }} />
         <Stack.Screen name="About" component={AboutScreen} options={{
           header: ({ navigation }) => (
             <CustomHeader title="About" onBackPress={() => navigation.goBack()} />
+          ),
+        }} />
+        <Stack.Screen name="NewList" component={NewListScreen} options={{
+          header: ({ navigation }) => (
+            <CustomHeader title="New List Creation" onBackPress={() => navigation.goBack()} />
           ),
         }} />
       </Stack.Navigator>

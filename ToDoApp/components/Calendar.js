@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 
-function SearchScreen({ navigation }) {
+function CalendarScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
             <View>
-                <Text>Search Screen</Text>
+                <Text>Calendar Screen</Text>
             </View>
         </View>
 
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SearchScreen;
+export default CalendarScreen;
