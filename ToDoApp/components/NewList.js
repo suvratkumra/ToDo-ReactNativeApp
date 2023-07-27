@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
 
 export default function NewListScreen() {
-    const [listField, setListField] = useState([]);
+    const [listField, setListField] = useState([""]);
     const [importantIndex, setImportantIndex] = useState([]);
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [openCalendar, setOpenCalendar] = useState(false);
+    const [listName, setListName] = useState("");
+    const [listNameFocused, setListNameFocused] = useState(false);
 
     const handleAddingTextToItem = (text, index) => {
         // Create a copy of the listField array
@@ -32,9 +37,47 @@ export default function NewListScreen() {
         setImportantIndex(updatedImpList);
     };
 
+    const handleCalendarView = () => {
+        setOpenCalendar(!openCalendar);
+    }
+
 
     return (
         <ScrollView style={styles.scrollContainer}>
+            <View style={[styles.textInputContainer, { borderWidth: 1, borderColor: 'gray' }]}>
+                <TextInput
+                    placeholder="List Name"
+                    style={listNameFocused ? styles.setListOnFocus : styles.setListOnBlur}
+                    placeholderTextColor={"#666666"}
+                    value={listName}
+                    onChangeText={(value) => setListName(value)}
+                    onFocus={() => setListNameFocused(true)}
+                    onBlur={() => setListNameFocused(false)} />
+            </View>
+            <View>
+                <TouchableOpacity onPress={handleCalendarView} style={calendarStyles.calendarToggleButton}>
+                    <Text style={calendarStyles.calendarToggleText}>
+                        {date}
+                    </Text>
+                </TouchableOpacity>
+                {openCalendar &&
+                    (
+                        <View style={calendarStyles.calendarContainer}>
+                            <Calendar
+                                onDayPress={day => setDate(day.dateString)}     // if the date is pressed, update the date.
+                                markedDates={{
+                                    [date]: { selected: true, marked: true, selectedColor: '#FF6B6B' }
+                                }}
+                            />
+                            {/* <TouchableOpacity style={calendarStyles.closeCalendarContainer} onPress={() => setOpenCalendar(false)}>
+                                <Text>
+                                    Close Calendar
+                                </Text>
+                            </TouchableOpacity> */}
+                        </View>
+                    )
+                }
+            </View>
             <TouchableOpacity style={styles.addItemButton} onPress={() => setListField([...listField, ""])}>
                 <View>
                     <Text style={styles.addItemButtonText}> + </Text>
@@ -75,10 +118,44 @@ export default function NewListScreen() {
     );
 }
 
+const calendarStyles = StyleSheet.create({
+    calendarToggleButton: {
+        borderColor: '#D34C4C',
+        borderWidth: 1,
+        alignSelf: "center",
+        borderRadius: '100%',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        marginTop: 20,
+        backgroundColor: '#FF7F7F'
+    },
+    calendarToggleText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '700'
+    },
+    calendarContainer: {
+        flex: 1,
+        marginBottom: 20, // Add margin at the bottom to create space for the closeCalendarContainer
+    },
+    closeCalendarContainer: {
+        alignSelf: 'flex-end', // Align the container to the right side of the parent View
+        borderWidth: 2,
+        padding: 10,
+    },
+});
+
 const styles = StyleSheet.create({
+    setListOnFocus: {
+        fontSize: 30
+    },
+    setListOnBlur: {
+
+    },
     scrollContainer: {
         backgroundColor: '#ffffff',
-        color: '#333333'
+        color: '#333333',
+        flex: 1
     },
     addItemButton: {
         paddingVertical: 10,

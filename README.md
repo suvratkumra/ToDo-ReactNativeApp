@@ -16,4 +16,5 @@
 ```
     npm install @react-navigation/native @react-navigation/stack
     npm install @react-native-async-storage/async-storage
+    npm install react-native-calendars
 ```

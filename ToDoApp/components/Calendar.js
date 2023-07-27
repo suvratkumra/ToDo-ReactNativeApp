@@ -1,11 +1,13 @@
+import React from 'react';
 import { View, Text, StyleSheet, Button } from "react-native";
+import { Calendar } from 'react-native-calendars';
 
 function CalendarScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
             <View>
-                <Text>Calendar Screen</Text>
+                <Calendar />
             </View>
         </View>
 
