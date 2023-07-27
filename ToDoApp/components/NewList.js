@@ -41,11 +41,9 @@ export default function NewListScreen() {
                 </View>
             </TouchableOpacity>
             {listField.map((value, index) => {
-                const displayIndex = index + 1;
                 const isImportant = importantIndex.includes(index);
                 return (
                     <View key={index} style={styles.textContainer}>
-                        <Text>{displayIndex}</Text>
                         <TouchableOpacity onPress={() => { handleRemovingInputField(index); }}>
                             <View>
                                 <FontAwesome name="remove" size={24} color="black" />
@@ -55,7 +53,7 @@ export default function NewListScreen() {
                             <TextInput
                                 style={[styles.inputText, isImportant && styles.inputTextImportant]}
                                 placeholder="Enter text here"
-                                placeholderTextColor="#666666"
+                                placeholderTextColor={isImportant ? "#FFFFF0" : "#666666"}
                                 value={value} // Bind the value of TextInput to the corresponding element in the listField array
                                 onChangeText={(text) => handleAddingTextToItem(text, index)}
                             />
