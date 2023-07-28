@@ -17,4 +17,5 @@
     npm install @react-navigation/native @react-navigation/stack
     npm install @react-native-async-storage/async-storage
     npm install react-native-calendars
+    npm install react-native-device-info @react-native-async-storage/async-storage // for unique device information.
 ```
