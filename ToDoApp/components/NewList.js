@@ -1,15 +1,97 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 
+import { db } from "../config/firebaseConnect";
+import { collection, addDoc, deleteDoc } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/core";
+import * as SecureStore from 'expo-secure-store'
+import { useNavigation } from '@react-navigation/native';
+
+
 export default function NewListScreen() {
+    const navigation = useNavigation();
     const [listField, setListField] = useState([""]);
     const [importantIndex, setImportantIndex] = useState([]);
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [openCalendar, setOpenCalendar] = useState(false);
     const [listName, setListName] = useState("");
     const [listNameFocused, setListNameFocused] = useState(false);
+
+    // Function to save the list data to the backend
+    const saveListToBackend = async () => {
+        // get the device id
+        const getDeviceId = async () => {
+            const id = await SecureStore.getItemAsync('deviceid');
+            return id;
+        }
+        const deviceId = await getDeviceId();
+        console.log(listField, importantIndex)
+        const allTasks = listField.map((value, index) => {
+            if (value === "") {
+            }
+            else {
+                return ({
+                    task: value,
+                    isImportant: importantIndex.includes(index)
+                })
+            }
+        })
+        console.log('====================================');
+        console.log("all taks", allTasks);
+        console.log('====================================');
+        const dbConfiguredList = {
+            deviceID: deviceId,
+            lists: [{
+                ListName: listName,
+                Date: date,
+                List: allTasks
+            }]
+        }
+
+        const addData = async () => {
+            try {
+                if (allTasks !== undefined) {
+                    const docRef = await addDoc(collection(db, "ToDoTasks"), dbConfiguredList);
+                    console.log("Document written with ID: ", docRef.id);
+                }
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
+        }
+
+        addData();
+
+        console.log("List data saved to backend.");
+    }
+
+    // // useEffect(() => { }, [listField])
+
+    // // Use the useFocusEffect hook to save the data whenever the screen loses focus
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         return () => {
+    //             saveListToBackend();
+    //         };
+    //     }, [])
+    // );
+
+    useEffect(() => {
+        const onSaveListToBackend = async () => {
+            await saveListToBackend();
+        };
+
+        // Add a listener to the "beforeRemove" event
+        navigation.addListener("beforeRemove", onSaveListToBackend);
+
+        // Cleanup function to remove the listener when the component is unmounted
+        return () => {
+            navigation.removeListener("beforeRemove", onSaveListToBackend);
+        };
+    }, [navigation, listField, importantIndex, listName]);
+
+    useEffect(() => { }, [listField])
 
     const handleAddingTextToItem = (text, index) => {
         // Create a copy of the listField array
@@ -20,6 +102,7 @@ export default function NewListScreen() {
 
         // Set the state with the updated array
         setListField(updatedList);
+        console.log(listField)
     };
 
     const handleRemovingImportant = (indexToRemove) => {

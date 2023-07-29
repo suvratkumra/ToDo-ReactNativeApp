@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Alert, View, Text, StyleSheet, Button, TouchableOpacity, TextInput } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // all these imports for unique id for the device.
 import * as SecureStore from 'expo-secure-store'
@@ -8,11 +7,8 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 function HomeScreen({ navigation }) {
-
     // extract them from the local storage.
     const [existingLists, setExistingLists] = useState([]);
-
-
 
     function goToPageHandler(name) {
         navigation.navigate(name)
@@ -22,21 +18,22 @@ function HomeScreen({ navigation }) {
         // calling this function to assign a unique id to the phone.
         const deviceUUID = async () => {
             let uuid = uuidv4();
-            let fetchUUID = await SecureStore.getItemAsync('secure_deviceid');
+            let fetchUUID = await SecureStore.getItemAsync('deviceid');
             //if user has already signed up prior
             if (fetchUUID) {
                 uuid = fetchUUID
             }
             else {
-                await SecureStore.setItemAsync('secure_deviceid', JSON.stringify(uuid));
+                await SecureStore.setItemAsync('deviceid', JSON.stringify(uuid));
             }
             console.log(uuid)
         }
         const deletePreviousUUID = async () => {
-            await SecureStore.deleteItemAsync('secure_deviceid');
+            await SecureStore.deleteItemAsync('deviceid');
         }
         deviceUUID();
         // deletePreviousUUID();
+
     }, [])
 
     return (
