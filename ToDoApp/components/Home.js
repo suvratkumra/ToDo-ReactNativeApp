@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, View, Text, StyleSheet, Button, TouchableOpacity, TextInput } from "react-native";
 
 // all these imports for unique id for the device.
@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 // to get the firebase implementation
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../config/firebaseConnect";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 function HomeScreen({ navigation }) {
@@ -37,11 +38,19 @@ function HomeScreen({ navigation }) {
 
     useEffect(() => {
         deviceUUID();
+        getAllLists()
     }, [])
 
     useEffect(() => {
-        getAllLists();
+        getAllLists()
     }, [deviceid])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log("This is called again.")
+            getAllLists();
+        }, [])
+    )
 
     const getAllLists = async () => {
         const tasksCollection = collection(db, "ToDoTasks");
@@ -86,7 +95,7 @@ function HomeScreen({ navigation }) {
                         <View style={existingListStyle.existingListContainer}>
                             {/* map the current data in existing list  */}
                             {existingLists.map((value, index) => {
-                                console.log(value.data);
+                                // console.log(value.data);
                                 return (
                                     <TouchableOpacity key={index} style={existingListStyle.itemContainer} onPress={() => { navigation.navigate('NewList', { documentId: value.documentId, redirectFromExistingList: 1, listData: value.data }) }}>
                                         <View style={existingListStyle.itemHeaderContainer}>

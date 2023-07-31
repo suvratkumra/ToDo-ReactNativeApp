@@ -4,7 +4,7 @@ import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 
 import { db } from "../config/firebaseConnect";
-import { collection, addDoc, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import * as SecureStore from 'expo-secure-store'
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,7 +17,7 @@ export default function NewListScreen({ route }) {
     const [openCalendar, setOpenCalendar] = useState(false);
     const [listName, setListName] = useState("");
     const [listNameFocused, setListNameFocused] = useState(false);
-    const { documentId, redirectFromExistingList, listData } = route.params;
+    const params = route.params;
 
     // Function to save the list data to the backend
     const saveListToBackend = async () => {
@@ -30,6 +30,10 @@ export default function NewListScreen({ route }) {
         console.log(listField, importantIndex)
         const allTasks = listField.map((value, index) => {
             if (value === "") {
+                return ({
+                    task: "",
+                    isImportant: importantIndex.includes(index)
+                })
             }
             else {
                 return ({
@@ -38,6 +42,9 @@ export default function NewListScreen({ route }) {
                 })
             }
         })
+        console.log('====================================');
+        console.log("All", allTasks);
+        console.log('====================================');
         const dbConfiguredList = {
             deviceID: deviceId,
             lists: [{
@@ -47,18 +54,31 @@ export default function NewListScreen({ route }) {
             }]
         }
 
-        const addData = async () => {
+        const createOrUpdateDocument = async () => {
             try {
-                if (allTasks !== undefined) {
-                    const docRef = await addDoc(collection(db, "ToDoTasks"), dbConfiguredList);
-                    console.log("Document written with ID: ", docRef.id);
+                // Create a reference to the specific document using the doc function
+                const documentRef = doc(db, "ToDoTasks", params?.documentId);
+
+                // Check if the document exists by fetching it
+                const documentSnapshot = await getDoc(documentRef);
+
+
+                console.log("dbconfigure ", dbConfiguredList)
+                // If the document exists, update it with the new data
+                if (documentSnapshot.exists()) {
+                    await updateDoc(documentRef, dbConfiguredList);
+                    console.log("Document updated successfully!");
+                } else {
+                    // If the document does not exist, create a new one with the given data
+                    await setDoc(documentRef, newData);
+                    console.log("Document created successfully!");
                 }
             } catch (e) {
-                console.error("Error adding document: ", e);
+                console.error("Error creating/updating document: ", e);
             }
-        }
+        };
 
-        addData();
+        createOrUpdateDocument();
 
         console.log("List data saved to backend.");
     }
@@ -71,8 +91,6 @@ export default function NewListScreen({ route }) {
         // Add a listener to the "beforeRemove" event
         navigation.addListener("beforeRemove", onSaveListToBackend);
 
-        console.log(redirectFromExistingList, documentId, listData);
-
         // Cleanup function to remove the listener when the component is unmounted
         return () => {
             navigation.removeListener("beforeRemove", onSaveListToBackend);
@@ -82,6 +100,26 @@ export default function NewListScreen({ route }) {
     }, [navigation, listField, importantIndex, listName]);
 
     useEffect(() => { }, [listField])
+
+    // if redirected by the existing list.
+    useEffect(() => {
+
+        console.log(params?.redirectFromExistingList, params?.documentId, params?.listData);
+
+        if (params?.redirectFromExistingList === 1) {
+            setDate(params?.listData?.Date);
+
+            var importantIndices = [];
+            const existingListTasks = params?.listData?.List?.map((value, index) => {
+                if (value.isImportant)
+                    importantIndex.push(index)
+                return value?.task;
+            })
+
+            setListField(existingListTasks)
+            setListName(params?.listData.ListName)
+        }
+    }, [])
 
     const handleAddingTextToItem = (text, index) => {
         // Create a copy of the listField array
