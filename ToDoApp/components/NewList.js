@@ -4,7 +4,7 @@ import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 
 import { db } from "../config/firebaseConnect";
-import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import * as SecureStore from 'expo-secure-store'
 import { useNavigation } from '@react-navigation/native';
 
@@ -62,7 +62,6 @@ export default function NewListScreen({ route }) {
                 // Check if the document exists by fetching it
                 const documentSnapshot = await getDoc(documentRef);
 
-
                 console.log("dbconfigure ", dbConfiguredList)
                 // If the document exists, update it with the new data
                 if (documentSnapshot.exists()) {
@@ -70,7 +69,7 @@ export default function NewListScreen({ route }) {
                     console.log("Document updated successfully!");
                 } else {
                     // If the document does not exist, create a new one with the given data
-                    await setDoc(documentRef, newData);
+                    await addDoc(collection(db, "ToDoTasks"), dbConfiguredList);
                     console.log("Document created successfully!");
                 }
             } catch (e) {
@@ -78,7 +77,24 @@ export default function NewListScreen({ route }) {
             }
         };
 
-        createOrUpdateDocument();
+        if (params?.documentId) {
+
+            createOrUpdateDocument();
+        }
+        else {
+            const addData = async () => {
+                try {
+                    if (allTasks !== undefined) {
+                        const docRef = await addDoc(collection(db, "ToDoTasks"), dbConfiguredList);
+                        console.log("Document written with ID: ", docRef.id);
+                    }
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                }
+            }
+
+            addData();
+        }
 
         console.log("List data saved to backend.");
     }

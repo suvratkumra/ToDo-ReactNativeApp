@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Alert, View, Text, StyleSheet, Button, TouchableOpacity, TextInput } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { Alert, View, Text, StyleSheet, Button, TouchableOpacity, TextInput, ScrollView } from "react-native";
 
 // all these imports for unique id for the device.
 import * as SecureStore from 'expo-secure-store'
@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../config/firebaseConnect";
 import { useFocusEffect } from "@react-navigation/native";
+import { InfoContext } from "../context/InformationContext";
 
 
 function HomeScreen({ navigation }) {
@@ -17,7 +18,7 @@ function HomeScreen({ navigation }) {
     const [existingLists, setExistingLists] = useState([]);
     const [deviceid, setDeviceid] = useState("");
     const [tempCount, setTempCount] = useState(1);
-
+    const { AddAllDatesAction } = useContext(InfoContext)
 
     // calling this function to assign a unique id to the phone.
     const deviceUUID = async () => {
@@ -38,19 +39,14 @@ function HomeScreen({ navigation }) {
 
     useEffect(() => {
         deviceUUID();
-        getAllLists()
+        getAllLists().then();
     }, [])
 
     useEffect(() => {
-        getAllLists()
+        getAllLists().then()
     }, [deviceid])
 
-    useFocusEffect(
-        React.useCallback(() => {
-            console.log("This is called again.")
-            getAllLists();
-        }, [])
-    )
+
 
     const getAllLists = async () => {
         const tasksCollection = collection(db, "ToDoTasks");
@@ -66,7 +62,9 @@ function HomeScreen({ navigation }) {
                     }
                 });
                 setExistingLists(lists);
-                // console.log("Items with device ID:", lists);
+                const dates = lists.map(value => { return value.data.Date })
+                AddAllDatesAction(dates)
+                // console.log("Items with device ID:", dates);
             }
             catch (e) {
                 Alert.alert(e);
@@ -86,7 +84,7 @@ function HomeScreen({ navigation }) {
                     </View>
                 </TouchableOpacity>
             </View>
-            <View style={styles.existingListContainer}>
+            <ScrollView style={styles.existingListContainer}>
                 {/* TODO: Make the list pop up as per the upcoming date. */}
                 <Text>Upcoming Lists</Text>
 
@@ -120,7 +118,7 @@ function HomeScreen({ navigation }) {
                     )
                 }
 
-            </View>
+            </ScrollView>
 
         </View>
 

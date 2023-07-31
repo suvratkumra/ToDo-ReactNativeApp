@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Calendar } from 'react-native-calendars';
+import { InfoContext } from '../context/InformationContext';
 
 function CalendarScreen({ navigation }) {
-
+    const { state, markedDates } = useContext(InfoContext)
+    console.log("State", state)
     return (
         <View style={styles.container}>
             <View>
-                <Calendar />
+                <Calendar markedDates={markedDates} />
             </View>
         </View>
 
