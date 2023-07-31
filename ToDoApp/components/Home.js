@@ -6,35 +6,64 @@ import * as SecureStore from 'expo-secure-store'
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
+// to get the firebase implementation
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../config/firebaseConnect";
+
+
 function HomeScreen({ navigation }) {
     // extract them from the local storage.
     const [existingLists, setExistingLists] = useState([]);
+    const [deviceid, setDeviceid] = useState("");
+    const [tempCount, setTempCount] = useState(1);
 
-    function goToPageHandler(name) {
-        navigation.navigate(name)
+
+    // calling this function to assign a unique id to the phone.
+    const deviceUUID = async () => {
+        let uuid = uuidv4();
+        let fetchUUID = await SecureStore.getItemAsync('deviceid');
+        //if user has already signed up prior
+        if (fetchUUID) {
+            uuid = fetchUUID
+        }
+        else {
+            await SecureStore.setItemAsync('deviceid', JSON.stringify(uuid));
+        }
+        setDeviceid(uuid);
+    }
+    const deletePreviousUUID = async () => {
+        await SecureStore.deleteItemAsync('deviceid');
     }
 
     useEffect(() => {
-        // calling this function to assign a unique id to the phone.
-        const deviceUUID = async () => {
-            let uuid = uuidv4();
-            let fetchUUID = await SecureStore.getItemAsync('deviceid');
-            //if user has already signed up prior
-            if (fetchUUID) {
-                uuid = fetchUUID
-            }
-            else {
-                await SecureStore.setItemAsync('deviceid', JSON.stringify(uuid));
-            }
-            console.log(uuid)
-        }
-        const deletePreviousUUID = async () => {
-            await SecureStore.deleteItemAsync('deviceid');
-        }
         deviceUUID();
-        // deletePreviousUUID();
-
     }, [])
+
+    useEffect(() => {
+        getAllLists();
+    }, [deviceid])
+
+    const getAllLists = async () => {
+        const tasksCollection = collection(db, "ToDoTasks");
+
+        if (tasksCollection) {
+            const q = query(tasksCollection, where("deviceID", '==', deviceid));
+            try {
+                const querySnapshot = await getDocs(q);
+                const lists = querySnapshot.docs.map(doc => {
+                    return {
+                        documentId: doc.id,
+                        data: doc.data().lists[0]
+                    }
+                });
+                setExistingLists(lists);
+                // console.log("Items with device ID:", lists);
+            }
+            catch (e) {
+                Alert.alert(e);
+            }
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -52,16 +81,77 @@ function HomeScreen({ navigation }) {
                 {/* TODO: Make the list pop up as per the upcoming date. */}
                 <Text>Upcoming Lists</Text>
 
-                {/* TODO: Make this conditional */}
-                <View style={styles.noListToShowContainer}>
-                    <Text style={styles.noListText}> No Lists to Show! </Text>
-                </View>
+                {
+                    existingLists.length > 0 ? (
+                        <View style={existingListStyle.existingListContainer}>
+                            {/* map the current data in existing list  */}
+                            {existingLists.map((value, index) => {
+                                console.log(value.data);
+                                return (
+                                    <TouchableOpacity key={index} style={existingListStyle.itemContainer} onPress={() => { navigation.navigate('NewList', { documentId: value.documentId, redirectFromExistingList: 1, listData: value.data }) }}>
+                                        <View style={existingListStyle.itemHeaderContainer}>
+                                            <Text style={existingListStyle.itemTitle}>
+                                                {value.data.ListName === "" ? (
+                                                    <Text style={existingListStyle.tempTitle}>
+                                                        List
+                                                    </Text>) : value.data.ListName}
+                                            </Text>
+                                            <Text style={existingListStyle.itemDate}>
+                                                {value.data.Date}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                )
+                            })}
+                        </View>
+                    ) : (
+                        <View style={styles.noListToShowContainer}>
+                            <Text style={styles.noListText}> No Lists to Show! </Text>
+                        </View>
+                    )
+                }
+
             </View>
 
         </View>
 
     );
 }
+
+const existingListStyle = StyleSheet.create({
+    existingListContainer: {
+
+    },
+    itemContainer: {
+        borderColor: '#DDDDDD',
+        borderWidth: 2,
+        backgroundColor: '#f0f0f0',
+        marginVertical: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        borderRadius: '20%'
+    },
+    itemHeaderContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: 'center'
+    },
+    itemText: {
+
+    },
+    itemTitle: {
+        color: '#333333',
+        fontSize: 26,
+        fontWeight: "bold"
+    },
+    tempTitle: {
+        color: '#aaaaaa'
+    },
+    itemDate: {
+        fontSize: 20,
+    },
+
+})
 
 const styles = StyleSheet.create({
     container: {

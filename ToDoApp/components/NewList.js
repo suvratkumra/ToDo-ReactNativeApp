@@ -5,12 +5,11 @@ import { Calendar } from 'react-native-calendars';
 
 import { db } from "../config/firebaseConnect";
 import { collection, addDoc, deleteDoc } from "firebase/firestore";
-import { useFocusEffect } from "@react-navigation/core";
 import * as SecureStore from 'expo-secure-store'
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function NewListScreen() {
+export default function NewListScreen({ route }) {
     const navigation = useNavigation();
     const [listField, setListField] = useState([""]);
     const [importantIndex, setImportantIndex] = useState([]);
@@ -18,6 +17,7 @@ export default function NewListScreen() {
     const [openCalendar, setOpenCalendar] = useState(false);
     const [listName, setListName] = useState("");
     const [listNameFocused, setListNameFocused] = useState(false);
+    const { documentId, redirectFromExistingList, listData } = route.params;
 
     // Function to save the list data to the backend
     const saveListToBackend = async () => {
@@ -38,9 +38,6 @@ export default function NewListScreen() {
                 })
             }
         })
-        console.log('====================================');
-        console.log("all taks", allTasks);
-        console.log('====================================');
         const dbConfiguredList = {
             deviceID: deviceId,
             lists: [{
@@ -66,17 +63,6 @@ export default function NewListScreen() {
         console.log("List data saved to backend.");
     }
 
-    // // useEffect(() => { }, [listField])
-
-    // // Use the useFocusEffect hook to save the data whenever the screen loses focus
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         return () => {
-    //             saveListToBackend();
-    //         };
-    //     }, [])
-    // );
-
     useEffect(() => {
         const onSaveListToBackend = async () => {
             await saveListToBackend();
@@ -85,10 +71,14 @@ export default function NewListScreen() {
         // Add a listener to the "beforeRemove" event
         navigation.addListener("beforeRemove", onSaveListToBackend);
 
+        console.log(redirectFromExistingList, documentId, listData);
+
         // Cleanup function to remove the listener when the component is unmounted
         return () => {
             navigation.removeListener("beforeRemove", onSaveListToBackend);
         };
+
+
     }, [navigation, listField, importantIndex, listName]);
 
     useEffect(() => { }, [listField])
