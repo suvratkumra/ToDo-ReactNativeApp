@@ -7,7 +7,7 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 // to get the firebase implementation
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebaseConnect";
 import { useFocusEffect } from "@react-navigation/native";
 import { InfoContext } from "../context/InformationContext";
@@ -17,7 +17,6 @@ function HomeScreen({ navigation }) {
     // extract them from the local storage.
     const [existingLists, setExistingLists] = useState([]);
     const [deviceid, setDeviceid] = useState("");
-    const [tempCount, setTempCount] = useState(1);
     const { AddAllDatesAction } = useContext(InfoContext)
 
     // calling this function to assign a unique id to the phone.
@@ -39,13 +38,28 @@ function HomeScreen({ navigation }) {
 
     useEffect(() => {
         deviceUUID();
-        getAllLists().then();
     }, [])
 
     useEffect(() => {
         getAllLists().then()
     }, [deviceid])
 
+    useFocusEffect(
+        React.useCallback(() => {
+            getAllLists().then()
+        }, [])
+    )
+
+    // Function to delete a Firestore document based on the document ID
+    const deleteDocument = async (documentId) => {
+        try {
+            const documentRef = doc(db, 'ToDoTasks', documentId); // Replace 'collection_name' with the actual name of your collection
+            await deleteDoc(documentRef);
+            console.log('Document deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting document: ', error);
+        }
+    };
 
 
     const getAllLists = async () => {
@@ -95,19 +109,25 @@ function HomeScreen({ navigation }) {
                             {existingLists.map((value, index) => {
                                 // console.log(value.data);
                                 return (
-                                    <TouchableOpacity key={index} style={existingListStyle.itemContainer} onPress={() => { navigation.navigate('NewList', { documentId: value.documentId, redirectFromExistingList: 1, listData: value.data }) }}>
-                                        <View style={existingListStyle.itemHeaderContainer}>
-                                            <Text style={existingListStyle.itemTitle}>
-                                                {value.data.ListName === "" ? (
-                                                    <Text style={existingListStyle.tempTitle}>
-                                                        List
-                                                    </Text>) : value.data.ListName}
-                                            </Text>
-                                            <Text style={existingListStyle.itemDate}>
-                                                {value.data.Date}
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
+                                    <View key={index} style={existingListStyle.overallContainer}>
+                                        <TouchableOpacity style={existingListStyle.itemContainer} onPress={() => { navigation.navigate('NewList', { documentId: value.documentId, redirectFromExistingList: 1, listData: value.data }) }}>
+                                            <View style={existingListStyle.itemHeaderContainer}>
+                                                <Text style={existingListStyle.itemTitle}>
+                                                    {value.data.ListName === "" ? (
+                                                        <Text style={existingListStyle.tempTitle}>
+                                                            List
+                                                        </Text>) : value.data.ListName}
+                                                </Text>
+                                                <Text style={existingListStyle.itemDate}>
+                                                    {value.data.Date}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={existingListStyle.deleteContainer} onPress={() => { deleteDocument(value.documentId) }}>
+                                            <Text style={existingListStyle.deleteText}>Delete List</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
                                 )
                             })}
                         </View>
@@ -129,22 +149,41 @@ const existingListStyle = StyleSheet.create({
     existingListContainer: {
 
     },
-    itemContainer: {
+    overallContainer: {
         borderColor: '#DDDDDD',
         borderWidth: 2,
         backgroundColor: '#f0f0f0',
-        marginVertical: 20,
-        paddingHorizontal: 10,
-        paddingVertical: 20,
-        borderRadius: '20%'
+        borderRadius: '20%',
+        marginVertical: 10
+    },
+    deleteContainer: {
+        backgroundColor: 'red',
+        color: 'white',
+        borderColor: 'red',
+        borderWidth: 1,
+        borderBottomEndRadius: '20%',
+        borderBottomLeftRadius: '20%',
+        padding: 5,
+        alignItems: "center"
+    },
+    itemContainer: {
+        paddingHorizontal: 20,
+        margin: 10
+
     },
     itemHeaderContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: 'center'
+        alignItems: 'center',
+
     },
     itemText: {
 
+    },
+    deleteText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: "700"
     },
     itemTitle: {
         color: '#333333',

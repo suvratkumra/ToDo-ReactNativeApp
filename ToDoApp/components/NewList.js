@@ -42,9 +42,6 @@ export default function NewListScreen({ route }) {
                 })
             }
         })
-        console.log('====================================');
-        console.log("All", allTasks);
-        console.log('====================================');
         const dbConfiguredList = {
             deviceID: deviceId,
             lists: [{
