@@ -2,17 +2,21 @@
 // adding the firestore
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import {
+    FIREBASE_APIKEY, FIREBASE_AUTHDOMAIN,
+    FIREBASE_PROJECTID, FIREBASE_STORAGEBUCKET,
+    FIREBASE_MESSAGINGSENDERID, FIREBASE_APPID,
+    FIREBASE_MEASUREMENTID
+} from '@env'
 
-// TODO: Replace the following with your app's Firebase project configuration
-// See: https://support.google.com/firebase/answer/7015592
 const firebaseConfig = {
-    apiKey: "AIzaSyAGDBkX7nHwwISDRssAmfe4T2Z75A6A3l4",
-    authDomain: "todoapp-6aed4.firebaseapp.com",
-    projectId: "todoapp-6aed4",
-    storageBucket: "todoapp-6aed4.appspot.com",
-    messagingSenderId: "980803811688",
-    appId: "1:980803811688:web:925be0959ed4f179b4fedd",
-    measurementId: "G-DTJMKGZY15"
+    apiKey: FIREBASE_APIKEY,
+    authDomain: FIREBASE_AUTHDOMAIN,
+    projectId: FIREBASE_PROJECTID,
+    storageBucket: FIREBASE_STORAGEBUCKET,
+    messagingSenderId: FIREBASE_MESSAGINGSENDERID,
+    appId: FIREBASE_APPID,
+    measurementId: FIREBASE_MEASUREMENTID
 };
 
 // Initialize Firebase
